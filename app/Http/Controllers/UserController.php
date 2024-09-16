@@ -2,25 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
+use App\Interfaces\UserInterface;
 use Illuminate\Http\Request;
+
 
 class UserController extends Controller
 {
+    protected UserInterface $userInterface;
+    public function __construct(UserInterface $userInterface) {
+        $this->userInterface = $userInterface;
+    }
     public function signup(Request $request){
-        /* Create response data */
-        $response=[
-            'data' => [],
-            'statusCode'=> 200
-        ];
-
-        $response['data']['input']=$request->all();
-        $response['data']['headers']=$request->header('website');
-
-
-
-
-        /*send response data */
-        return response()->json($response['data'],$response['statusCode']);
+        return $this->userInterface->signup($request);
+    }
+    public function totalUsers(Request $request){
+        return $this->userInterface->getEntireTableData($request);
     }
 }
