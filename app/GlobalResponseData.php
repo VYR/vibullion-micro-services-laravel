@@ -3,18 +3,23 @@
 namespace App;
 
 use Illuminate\Support\Str;
+use App\GlobalLogger;
 trait GlobalResponseData
 {
     function sendResponse($errCode = 404, $errMsg='', $data='', $status='') {
-        $this->errCode = $errCode;
-        $this->errMsg = $errMsg;
-        $this->data = $data;
-        $this->status = $status;
+        $this->logMe(message:'start GlobalResponseData::sendResponse()',data:['file' => __FILE__, 'line' => __LINE__]);
         $data=[
-            'message' =>  $this->errMsg,
-            'data' =>  $this->data,
-            'status' => Str::length($this->status)?$this->status:( $this->errCode===200?config('app-constants.BASIC.SUCCESS'):config('app-constants.BASIC.FAILED'))
+            'message' =>  $errMsg,
+            'data' =>  $data,
+            'status' => Str::length($status)?$status:( $errCode===200?config('app-constants.BASIC.SUCCESS'):config('app-constants.BASIC.FAILED'))
         ];
-        return response()->json($data, $this->errCode);
+
+        try{
+            return response()->json($data, $errCode);
+        }catch(\Exception $e){
+            //return false;
+            $this->logMe(message:'end login() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            return response()->json($data, $errCode);
+        }
     }
 }

@@ -11,4 +11,5 @@ interface UserRepositoryInterface
     public function findByEmailAndPassword($email, $password);
     public function createUserByEmail(array $data);
     public function signup(array $data);
+    public function login(array $data);
 }

@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(UserInterface::class, UserService::class);
-        $this->app->singleton(ExceptionHandler::class, GlobalExceptionHandler::class);
+       // $this->app->singleton(ExceptionHandler::class, GlobalExceptionHandler::class);
 
     }
 
