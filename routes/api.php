@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SingleContentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -9,6 +10,12 @@ Route::group([], function () {
     Route::group(['prefix' => 'user'], function() {
 
         Route::post('/signup', [UserController::class,'signup']);
+
+    });
+    /**Single Content routes */
+    Route::group(['prefix' => 'single-content'], function() {
+
+        Route::post('/add', [SingleContentController::class,'addSingleContent']);
 
     });
     /**Admin routes */
