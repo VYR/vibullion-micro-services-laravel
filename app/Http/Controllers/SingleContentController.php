@@ -15,4 +15,7 @@ class SingleContentController extends Controller
     public function addSingleContent(Request $request){
         return $this->singleContentInterface->addContent($request);
     }
+    public function getSingleContent(Request $request){
+        return $this->singleContentInterface->getContent($request);
+    }
 }

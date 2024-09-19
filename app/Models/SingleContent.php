@@ -36,7 +36,24 @@ class SingleContent extends Model
     {
         return [
             'main_page' => 'array',
-            'products' => 'array'
+            'products' => 'array',
+            'credit_assessment' => 'array',
+            'blogs' => 'array',
+            'webinars' => 'array',
+            'faqs' => 'array',
+            'about_us' => 'array',
+            'careers' => 'array',
+            'contact_us' => 'array',
+            'refer_earn' => 'array',
+            'become_partner' => 'array',
+            'after_login' => 'array',
+            'consultation' => 'array',
+            'complete_kyc' => 'array',
+            'schemes' => 'array',
+            'scheme_details1' => 'array',
+            'scheme_details2' => 'array',
+            'dashboard' => 'array',
+            'profile' => 'array'
         ];
     }
 }

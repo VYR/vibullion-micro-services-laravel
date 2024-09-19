@@ -17,6 +17,10 @@ return [
                 $common['SUCCESS']=> 'Account Created Successfully',
                 $common['FAILED']=> 'Email already existed',
             ],
+            'GENERAL'=> [
+                $common['SUCCESS']=> 'Data Saved Successfully',
+                $common['FAILED']=> 'Cannot Save the Data',
+            ],
             'CREATED_SUCCESSFULLY'=> '',
             'GET_DATA_SUCCESSFUL'=> 'Data received successfully',
         ],

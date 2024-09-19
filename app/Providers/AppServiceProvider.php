@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UserInterface::class, UserService::class);
         $this->app->singleton(SingleContentInterface::class, SingleContentService::class);
         $this->app->singleton(SingleContentRepositoryInterface::class, SingleContentRepositoryService::class);
-        $this->app->singleton(ExceptionHandler::class, GlobalExceptionHandler::class);
+        // $this->app->singleton(ExceptionHandler::class, GlobalExceptionHandler::class);
 
     }
 

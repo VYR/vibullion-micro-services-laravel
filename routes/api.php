@@ -16,6 +16,7 @@ Route::group([], function () {
     Route::group(['prefix' => 'single-content'], function() {
 
         Route::post('/add', [SingleContentController::class,'addSingleContent']);
+        Route::get('/get', [SingleContentController::class,'getSingleContent']);
 
     });
     /**Admin routes */
@@ -24,8 +25,6 @@ Route::group([], function () {
         Route::get('/total-users', [UserController::class,'totalUsers']);
 
     });
-    /**Call micro services */
-    Route::any('{serviceURL}/{segment1?}/{segment2?}', [UserController::class,'callMicroServices']);
 
 });
 
