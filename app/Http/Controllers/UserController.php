@@ -28,4 +28,7 @@ class UserController extends Controller
         $data['url']= $request->path();
         return response()->json($data,200);
     }
+    public function getAadharUrl(Request $request){
+        return $this->userInterface->getAadharUrl($request);
+    }
 }

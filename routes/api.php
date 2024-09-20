@@ -10,6 +10,7 @@ Route::group([], function () {
     Route::group(['prefix' => 'user'], function() {
 
         Route::post('/signup', [UserController::class,'signup']);
+        Route::post('/get-aadhar-url', [UserController::class,'getAadharUrl']);
 
     });
     /**Single Content routes */
