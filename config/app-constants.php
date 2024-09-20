@@ -22,6 +22,10 @@ return [
                 $common['SUCCESS']=> 'Account Created Successfully',
                 $common['FAILED']=> 'Email already existed',
             ],
+            'LOGIN'=> [
+                $common['SUCCESS']=> 'Login Success',
+                $common['FAILED']=> 'Invalid Credentials',
+            ],
             'CREATED_SUCCESSFULLY'=> '',
             'GET_DATA_SUCCESSFUL'=> 'Data received successfully',
         ],
