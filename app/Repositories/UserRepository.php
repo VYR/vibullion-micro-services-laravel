@@ -51,10 +51,7 @@ class UserRepository implements UserRepositoryInterface
                     $resp['data']='Email Already Existed';
                     return $resp;
                 }
-            }  
-
-            
-            
+            }              
             if(array_key_exists('phoneNumber', $data['user_details']['signup_data'])){
                 $conditions=[
                     ["user_details->signup_data->phoneNumber",'=', $data['user_details']['signup_data']['phoneNumber']],
@@ -75,7 +72,6 @@ class UserRepository implements UserRepositoryInterface
             
         }
         catch(\Exception $e){
-            //return false;
             throw new GlobalException(errCode:404,data:[], errMsg: $e->getMessage());
         }
     }
@@ -93,31 +89,108 @@ class UserRepository implements UserRepositoryInterface
                 ["user_details->signup_data->website",'=', $data['website']]
             ];
             $response=User::where($conditions1)->orWhere($conditions2)->first();
-            //return  $data;
-            // return  $response;
             if(is_null($response)){
                 return $response;
             }
             else{
-                // $user = User::where('email', $response['userId'])->first();
-
-                // if (! $user || ! Hash::check($data['password'], $user->password)) {
-                //     // throw ValidationException::withMessages([
-                //     //     'email' => ['The provided credentials are incorrect.'],
-                //     // ]);
-                //     throw new GlobalException(errCode:404,data:$user,
-                //     errMsg: 'The provided credentials are incorrect.');
-                // }
                 return [
                     'user'=> $response,
                     'token' => $response->createToken($response->email)->plainTextToken
                 ];
             }
+        }catch(\Exception $e){
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
+    public function sendOtpByMobile(array $data){
+        $this->logMe(message:'start sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            $conditions=[
+                ["user_details->signup_data->phoneNumber",'=', $data['mobile']],
+                ["user_details->signup_data->website",'=', $data['website']]
+            ];
+            $response=User::where($conditions)->first();
+            $existingRecord=[];
+            if($response)
+                $existingRecord=$response->toArray();
+            if(is_null($response)){
+                return ['status'=>false, 'data'=>''];
+            }
+            else if(array_key_exists('otp', $existingRecord['user_details'])){
+                $to_time = time();
+                $from_time = $existingRecord['user_details']['otp']['date'];
+                $timeDifference=round(abs($to_time - $from_time) / 60,2);
+                if($existingRecord['user_details']['otp']['numOfTimes']>=2){
+                    if($timeDifference<5){
+                        return ['status'=>false, 'data'=>'Your OTP request limit 3 times exceeded.'];
+                    }
+                    else{
+                        return $this->sendMobileOtp($existingRecord,0,$response);
+                    }
+                }
+                else{
+                    return $this->sendMobileOtp($existingRecord,($existingRecord['user_details']['otp']['numOfTimes']+1),$response);
+                }
+            }
+            else{
+                return $this->sendMobileOtp($existingRecord,0,$response);
+                
+            }
 
         }catch(\Exception $e){
-            //return false;
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
 
     }
+
+    private function sendMobileOtp($existingRecord,$numOfTimes,$response){
+        $otp=['value'=>mt_rand(1, 999999),'numOfTimes'=>$numOfTimes, 'date'=>time()];
+        $existingRecord['user_details']['otp']=$otp;
+        $response->user_details=$existingRecord['user_details'];
+        if($response->save())
+            return ['status'=>true, 'data'=>''];
+        else
+            return ['status'=>false, 'data'=>''];
+    }
+
+    public function verifyOtp(array $data){
+        $this->logMe(message:'start verifyOtp()',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            $conditions1=[
+                ["user_details->signup_data->email",'=', $data['email']],
+                ["user_details->signup_data->website",'=', $data['website']]
+            ];
+            $conditions2=[
+                ["user_details->signup_data->phoneNumber",'=', $data['email']],
+                ["user_details->signup_data->website",'=', $data['website']]
+            ];
+            $response=User::where($conditions1)->orWhere($conditions2)->first();
+            if(!array_key_exists('otp', $data)){
+                return null;
+            }
+            if(is_null($response)){
+                return $response;
+            }
+            else{
+                $existingRecord=$response->toArray();
+                if(array_key_exists('otp', $existingRecord['user_details'])){
+                    if($existingRecord['user_details']['otp']['value']===$data['otp']){
+                        return [
+                            'user'=> $response,
+                            'token' => $response->createToken($response->email)->plainTextToken
+                        ];
+                    }
+                    else
+                        return null;
+                    
+                }
+                else
+                    return null;
+            }
+        }catch(\Exception $e){
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+    
 }

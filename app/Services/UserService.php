@@ -78,14 +78,9 @@ class UserService implements UserInterface
             'msg'=> '',
             'statusCode'=> 200
         ];
-        /** Prepare model or table or DB Data */
         $data=$request->all();
         $data['website']= $request->header('website');
         try{
-            /* Create response data */
-
-
-            /** Call DB operations */
             $dbStatus=$this->userRepository->login($data);
             if($dbStatus){
                 $response['statusCode']=200;
@@ -103,15 +98,14 @@ class UserService implements UserInterface
             }
             $this->logMe(message:'end login()',data:['file' => __FILE__, 'line' => __LINE__]);
             $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
-            /*send response data */
             return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
         }catch(\Exception $e){
-            //return false;
             $this->logMe(message:'end login() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
+
     public function getEntireTableData(Request $request)
     {
         $this->logMe(message:'start getEntireTableData()',data:['file' => __FILE__, 'line' => __LINE__]);
@@ -243,5 +237,96 @@ class UserService implements UserInterface
         $this->logMe(message:'end handleMicroServicePostRequest()',data:['file' => __FILE__, 'line' => __LINE__]);
         return json_decode($response);
 
+    }
+
+    public function sendOtpByMobile(Request $request)
+    {
+        $this->logMe(message:'start sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        /** Prepare model or table or DB Data */
+        $data=$request->all();
+        $data['website']= $request->header('website');
+        try{
+            /* Create response data */
+
+
+            /** Call DB operations */
+            $dbStatus=null;
+            //$response['data']= $data;
+            if(array_key_exists('email', $data) && array_key_exists('mobile', $data))  {
+                $response['statusCode']=404;
+                $response['msg']= 'Either Email or Mobile are accepted';
+            }
+            else if(array_key_exists('email', $data)){
+                $response['msg']= 'OTP Sent Successfully to your Email Id';
+            }
+            else{
+                $dbStatus=$this->userRepository->sendOtpByMobile($data);
+                $this->logMe(message:'start sendOtpByMobile()',data:['file' => $dbStatus]);
+                if($dbStatus['status'])
+                    $response['msg']= 'OTP Sent Successfully to your Mobile Number';
+                else{
+                    $response['msg']= $dbStatus['data'];
+                    $response['statusCode']=404;
+                }
+            }
+            if($dbStatus){
+                $response['statusCode']=200;
+                //$response['data']=$dbStatus;
+                
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= array_key_exists('email', $data)?'Email does not exist':'Mobile Number does not exist';
+                $response['data']=[];
+            }
+            $this->logMe(message:'end sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
+            /*send response data */
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            //return false;
+            $this->logMe(message:'end sendOtpByMobile() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $this->logMe(message:'start verifyOtp()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        $data=$request->all();
+        $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->verifyOtp($data);
+            if($dbStatus){
+                $response['statusCode']=200;
+                $response['msg']= 'OTP Verified Successfully';
+                $a=$dbStatus['user']->toArray();
+                unset($a['user_details']['signup_data']['password']);
+                $dbStatus['user']=$a;
+                $response['data']=$dbStatus;
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']='Invalid OTP. Please try again';
+                $response['data']=[];
+            }
+            $this->logMe(message:'end verifyOtp()',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            $this->logMe(message:'end verifyOtp() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
     }
 }

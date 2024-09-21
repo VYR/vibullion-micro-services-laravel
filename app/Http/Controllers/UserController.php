@@ -33,4 +33,13 @@ class UserController extends Controller
         $this->logMe(message:'callMicroServices()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->handleMicroServices($request);
     }
+    public function sendOtpByMobile(Request $request){
+        $this->logMe(message:'sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
+        return $this->userInterface->sendOtpByMobile($request);
+    }
+    public function verifyOtp(Request $request){
+        $this->logMe(message:'verifyOtp()',data:['file' => __FILE__, 'line' => __LINE__]);
+        return $this->userInterface->verifyOtp($request);
+    }
+    
 }
