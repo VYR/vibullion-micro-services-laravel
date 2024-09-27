@@ -51,7 +51,7 @@ class UserRepository implements UserRepositoryInterface
                     $resp['data']='Email Already Existed';
                     return $resp;
                 }
-            }              
+            }
             if(array_key_exists('phoneNumber', $data['user_details']['signup_data'])){
                 $conditions=[
                     ["user_details->signup_data->phoneNumber",'=', $data['user_details']['signup_data']['phoneNumber']],
@@ -62,14 +62,14 @@ class UserRepository implements UserRepositoryInterface
                     $resp['data']='Phone Number ALready Existed';
                     return $resp;
                 }
-            } 
+            }
 
             $user=new User();
             $user->fill($data);
             $user->user_details=$data['user_details'];
             $resp['status']=$user->save();
             return $resp;
-            
+
         }
         catch(\Exception $e){
             throw new GlobalException(errCode:404,data:[], errMsg: $e->getMessage());
@@ -115,7 +115,7 @@ class UserRepository implements UserRepositoryInterface
             if($response)
                 $existingRecord=$response->toArray();
             if(is_null($response)){
-                return ['status'=>false, 'data'=>''];
+                return ['status' => false, 'data' => 'Invalid mobile number. Please try again with another number'];
             }
             else if(array_key_exists('otp', $existingRecord['user_details'])){
                 $to_time = time();
@@ -135,7 +135,7 @@ class UserRepository implements UserRepositoryInterface
             }
             else{
                 return $this->sendMobileOtp($existingRecord,0,$response);
-                
+
             }
 
         }catch(\Exception $e){
@@ -183,7 +183,7 @@ class UserRepository implements UserRepositoryInterface
                     }
                     else
                         return null;
-                    
+
                 }
                 else
                     return null;
@@ -192,5 +192,5 @@ class UserRepository implements UserRepositoryInterface
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
-    
+
 }

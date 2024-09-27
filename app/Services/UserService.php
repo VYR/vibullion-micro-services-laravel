@@ -43,11 +43,22 @@ class UserService implements UserInterface
                 'website'=> $request->header('website'),
                 'userId'=> $data['email'],
             ]];
+            /**Call micro service */
+            $services=config('app-constants.MICRO_SERVICES');
+            $serviceName=$services['WEBSITES'][$request->header('website')];
+            $prepareUrl= $services[$serviceName]['URL'].$services[$serviceName]['SIGNUP'];
             // $response['data']=$data;
             /** Call DB operations */
             $dbStatus=$this->userRepository->signup($data);
             // $response['data']['dbStatus']=$dbStatus;
             if($dbStatus['status']){
+                $params=[
+                    'id' => $data['email'],
+                    'user_details' => $data['user_details']
+                ];
+                $resp=$this->handleMicroServicePostRequest($prepareUrl, $params);
+                $response['data']['mic_signup']=$resp;
+                $response['data']['mic_signup_type']=is_array($resp);
                 $response['statusCode']=200;
                 $response['msg']= config('app-constants.RESPONSE.MSG.SIGNUP.SUCCESS');
             }
@@ -89,7 +100,7 @@ class UserService implements UserInterface
                 unset($a['user_details']['signup_data']['password']);
                 $dbStatus['user']=$a;
                 $response['data']=$dbStatus;
-                
+
             }
             else {
                 $response['statusCode']=404;
@@ -157,27 +168,30 @@ class UserService implements UserInterface
         $params=$request->all();
         if($requestMethod==='GET'){
             if(count($params)>0){
-                $prepareUrl = $prepareUrl . '?' . http_build_query($params);  
+                $prepareUrl = $prepareUrl . '?' . http_build_query($params);
             }
-            return $this->handleMicroServiceGetRequest($prepareUrl); 
+            return $this->handleMicroServiceGetRequest($prepareUrl);
         }
         else if($requestMethod==='POST'){
-            if(count($params)>0){ 
-                return $this->handleMicroServicePostRequest($prepareUrl, $params); 
+            if(count($params)>0){
+                return $this->handleMicroServicePostRequest($prepareUrl, $params);
             }
             else{
                 $response['msg']='Post Request must have Data';
                 $response['statusCode']=404;
+                $this->logMe(message:'Post Request must have Data',data:['file' => __FILE__, 'line' => __LINE__]);
                 return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
             }
         }
         else{
             $response['msg']='Invalid Method';
             $response['statusCode']=404;
+            $this->logMe(message:'Invalid Method',data:['file' => __FILE__, 'line' => __LINE__]);
             return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
         }
-        $this->logMe(message:'end handleMicroServices()',data:['file' => __FILE__, 'line' => __LINE__]);
-        }catch(\Exception $e){
+
+        }
+        catch(\Exception $e){
             $this->logMe(message:'end handleMicroServices() at Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(data:$response, errMsg: $e->getMessage());
         }
@@ -274,16 +288,16 @@ class UserService implements UserInterface
                     $response['statusCode']=404;
                 }
             }
-            if($dbStatus){
-                $response['statusCode']=200;
-                //$response['data']=$dbStatus;
-                
-            }
-            else {
-                $response['statusCode']=404;
-                $response['msg']= array_key_exists('email', $data)?'Email does not exist':'Mobile Number does not exist';
-                $response['data']=[];
-            }
+            // if($dbStatus){
+            //     $response['statusCode']=200;
+            //     $response['data']=$dbStatus;
+
+            // }
+            // else {
+            //     $response['statusCode']=404;
+            //     $response['msg']= array_key_exists('email', $data)?'Email does not exist':'Mobile Number does not exist';
+            //     $response['data']=$dbStatus;
+            // }
             $this->logMe(message:'end sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
             /*send response data */
             return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
@@ -312,6 +326,7 @@ class UserService implements UserInterface
                 $response['msg']= 'OTP Verified Successfully';
                 $a=$dbStatus['user']->toArray();
                 unset($a['user_details']['signup_data']['password']);
+                unset($a['user_details']['otp']);
                 $dbStatus['user']=$a;
                 $response['data']=$dbStatus;
             }
