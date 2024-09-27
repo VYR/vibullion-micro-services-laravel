@@ -77,7 +77,7 @@ class UserService implements UserInterface
         }
         catch(\Exception $e){
             //return false;
-            $this->logMe(message:'end login() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:'end signup() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:[], errMsg: $e->getMessage());
         }
     }
@@ -117,6 +117,66 @@ class UserService implements UserInterface
         }
     }
 
+    public function updateUserDetails(Request $request)
+    {
+        $this->logMe(message:'start updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        $data=$request->all();
+        // $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->updateUserDetails($data);
+            if($dbStatus['status']){
+                $response['statusCode']=200;
+                $response['msg']= $dbStatus['msg'];
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= $dbStatus['msg'];
+            }
+            $this->logMe(message:'end updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            $this->logMe(message:'end updateUserDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
+    public function updateBankDetails(Request $request)
+    {
+        $this->logMe(message:'start updateBankDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        $data=$request->all();
+        // $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->updateBankDetails($data);
+            if($dbStatus['status']){
+                $response['statusCode']=200;
+                $response['msg']= $dbStatus['msg'];
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= $dbStatus['msg'];
+            }
+            $this->logMe(message:'end updateBankDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            $this->logMe(message:'end updateBankDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
     public function getEntireTableData(Request $request)
     {
         $this->logMe(message:'start getEntireTableData()',data:['file' => __FILE__, 'line' => __LINE__]);
@@ -148,6 +208,7 @@ class UserService implements UserInterface
         try{
         $services=config('app-constants.MICRO_SERVICES');
         $requestMethod=$request->method();
+        $this->logMe(message:'Invalid Method',data:['method' => $requestMethod, 'line' => __LINE__]);
         $serviceName=$request->route()->parameter('serviceName');
         $segment1=$request->route()->parameter('segment1');
         $segment2=$request->route()->parameter('segment2');
@@ -229,7 +290,7 @@ class UserService implements UserInterface
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'http://localhost:8001/api/single-content/add',
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -327,6 +388,7 @@ class UserService implements UserInterface
                 $a=$dbStatus['user']->toArray();
                 unset($a['user_details']['signup_data']['password']);
                 unset($a['user_details']['otp']);
+                $a['email']=strval($a['email']);
                 $dbStatus['user']=$a;
                 $response['data']=$dbStatus;
             }

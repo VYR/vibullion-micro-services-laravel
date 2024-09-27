@@ -103,6 +103,97 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
+    public function updateUserDetails(array $data){
+        $this->logMe(message:'start updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            if(!array_key_exists('userId', $data)){
+                return [
+                    'msg'=> " User Id key is mandatory",
+                    'status' => false
+                ];
+            }
+            $conditions=[
+                ["email",'=', $data['userId']]
+            ];
+            $response=User::where($conditions)->first();
+            if(is_null($response)){
+                return [
+                    'msg'=> "Invalid User",
+                    'status' => false
+                ];
+            }
+            else{
+                $existingRecord=$response->toArray();
+                foreach ($data as $key => $value ) {
+                    if(array_key_exists($key, $existingRecord['user_details']['signup_data'])){
+                        $existingRecord['user_details']['signup_data'][$key]=$value;
+                    }
+                }
+                $response->user_details=$existingRecord['user_details'];
+                if ($response->save()) {
+                    return [
+                        'msg'=> " User Updated Successfully",
+                        'status' => true
+                    ];
+                }
+                else{
+                    return [
+                        'msg'=> "Unable to Update user",
+                        'status' => false
+                    ];
+                }
+            }
+        }catch(\Exception $e){
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
+    public function updateBankDetails(array $data){
+        $this->logMe(message:'start updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            if(!array_key_exists('userId', $data)){
+                return [
+                    'msg'=> " User Id key is mandatory",
+                    'status' => false
+                ];
+            }
+            $conditions=[
+                ["email",'=', $data['userId']]
+            ];
+            $response=User::where($conditions)->first();
+            if(is_null($response)){
+                return [
+                    'msg'=> "Invalid User",
+                    'status' => false
+                ];
+            }
+            else{
+                $existingRecord=$response->toArray();
+                foreach ($data as $key => $value ) {
+                    if(array_key_exists($key, $existingRecord['user_details']['signup_data'])){
+                        $existingRecord['user_details']['signup_data'][$key]=$value;
+                    }
+                }
+                $response->user_details=$existingRecord['user_details'];
+                if ($response->save()) {
+                    return [
+                        'msg'=> " User Updated Successfully",
+                        'status' => true
+                    ];
+                }
+                else{
+                    return [
+                        'msg'=> "Unable to Update user",
+                        'status' => false
+                    ];
+                }
+            }
+        }catch(\Exception $e){
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
+
     public function sendOtpByMobile(array $data){
         $this->logMe(message:'start sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
         try{
@@ -144,8 +235,12 @@ class UserRepository implements UserRepositoryInterface
 
     }
 
+    // private function generateOtp(){
+    //     $otp=
+    // }
+
     private function sendMobileOtp($existingRecord,$numOfTimes,$response){
-        $otp=['value'=>mt_rand(1, 999999),'numOfTimes'=>$numOfTimes, 'date'=>time()];
+        $otp=['value'=>mt_rand(111111, 999999),'numOfTimes'=>$numOfTimes, 'date'=>time()];
         $existingRecord['user_details']['otp']=$otp;
         $response->user_details=$existingRecord['user_details'];
         if($response->save())
@@ -183,7 +278,6 @@ class UserRepository implements UserRepositoryInterface
                     }
                     else
                         return null;
-
                 }
                 else
                     return null;
