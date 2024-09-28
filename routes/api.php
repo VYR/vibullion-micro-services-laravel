@@ -11,6 +11,10 @@ Route::group([], function () {
 
         Route::post('/signup', [UserController::class,'signup']);
         Route::post('/get-aadhar-url', [UserController::class,'getAadharUrl']);
+        Route::post('/update-bank-details', [UserController::class,'updateBankDetails']);
+        Route::post('/update-delivery-address', [UserController::class,'updateDeliveryAddress']);
+        Route::post('/update-payment-details', [UserController::class,'updatePaymentDetails']);
+        Route::post('/add-payment-details', [UserController::class,'addPaymentDetails']);
 
     });
     /**Single Content routes */
