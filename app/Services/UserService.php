@@ -59,6 +59,7 @@ class UserService implements UserInterface
                 $resp=$this->handleMicroServicePostRequest($prepareUrl, $params);
                 $response['data']['mic_signup']=$resp;
                 $response['data']['mic_signup_type']=is_array($resp);
+                $response['data']['mic_signup_type']=$resp->status;
                 $response['statusCode']=200;
                 $response['msg']= config('app-constants.RESPONSE.MSG.SIGNUP.SUCCESS');
             }
@@ -142,36 +143,6 @@ class UserService implements UserInterface
             return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
         }catch(\Exception $e){
             $this->logMe(message:'end updateUserDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
-            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
-        }
-    }
-
-    public function updateBankDetails(Request $request)
-    {
-        $this->logMe(message:'start updateBankDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
-        $response=[
-            'data' => [],
-            'msg'=> '',
-            'statusCode'=> 200
-        ];
-        $data=$request->all();
-        // $data['website']= $request->header('website');
-        try{
-            $dbStatus=$this->userRepository->updateBankDetails($data);
-            if($dbStatus['status']){
-                $response['statusCode']=200;
-                $response['msg']= $dbStatus['msg'];
-            }
-            else {
-                $response['statusCode']=404;
-                $response['msg']= $dbStatus['msg'];
-            }
-            $this->logMe(message:'end updateBankDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
-            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
-        }catch(\Exception $e){
-            $this->logMe(message:'end updateBankDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }

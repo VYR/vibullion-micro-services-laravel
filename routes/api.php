@@ -14,7 +14,6 @@ Route::group([
         Route::post('/signup', [UserController::class,'signup']);
         Route::post('/login', [UserController::class,'login']);
         Route::post('/update-user-details', [UserController::class,'updateUserDetails']);
-        Route::post('/update-bank-details', [UserController::class,'updateBankDetails']);
         Route::post('/send-otp', [UserController::class,'sendOtpByMobile']);
         Route::post('/verify-otp', [UserController::class,'verifyOtp']);
 

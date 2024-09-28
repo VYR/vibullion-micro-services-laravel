@@ -28,10 +28,6 @@ class UserController extends Controller
         $this->logMe(message:'updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->updateUserDetails($request);
     }
-    public function updateBankDetails(Request $request){
-        $this->logMe(message:'updateBankDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
-        return $this->userInterface->updateBankDetails($request);
-    }
     public function totalUsers(Request $request){
         $this->logMe(message:'totalUsers()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->getEntireTableData($request);

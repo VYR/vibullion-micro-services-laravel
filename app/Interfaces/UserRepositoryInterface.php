@@ -13,7 +13,6 @@ interface UserRepositoryInterface
     public function signup(array $data);
     public function login(array $data);
     public function updateUserDetails(array $data);
-    public function updateBankDetails(array $data);
     public function sendOtpByMobile(array $data);
     public function verifyOtp(array $data);
 
