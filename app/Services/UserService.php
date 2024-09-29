@@ -7,11 +7,7 @@ use App\GlobalLogger;
 use App\GlobalResponseData;
 use App\Interfaces\UserInterface;
 use App\Interfaces\UserRepositoryInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
-use GuzzleHttp\Psr7\Request as GuzzleHttp;
-use Psr\Http\Message\ResponseInterface;
 
 class UserService implements UserInterface
 {
@@ -49,7 +45,7 @@ class UserService implements UserInterface
         }
         catch(\Exception $e){
             $this->logMe(message:'end singup() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
-            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+            throw new GlobalException(errCode:404,data:'', errMsg: $e->getMessage());
         }
     }
     public function getEntireTableData(Request $request)
@@ -171,65 +167,5 @@ class UserService implements UserInterface
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
-    public function updatePaymentDetails(Request $request)
-    {
-        $this->logMe(message:'start updatePaymentDetails() Service',data:['file' => __FILE__, 'line' => __LINE__]);
-        $response=[
-            'data' => [],
-            'msg'=> '',
-            'statusCode'=> 200
-        ];
-        $data=$request->all();
-        // $data['website']= $request->header('website');
-        try{
-            $dbStatus=$this->userRepository->updatePaymentDetails($data);
-            if($dbStatus['status']){
-                $response['statusCode']=200;
-                $response['msg']= $dbStatus['msg'];
-            }
-            else {
-                $response['statusCode']=404;
-                $response['msg']= $dbStatus['msg'];
-            }
-            $this->logMe(message:'end updatePaymentDetails() Service',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
-            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
-        }catch(\Exception $e){
-            $this->logMe(message:'end updatePaymentDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
-            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
-        }
-    }
-    public function addPaymentDetails(Request $request)
-    {
-        $this->logMe(message:'start addPaymentDetails() Service',data:['file' => __FILE__, 'line' => __LINE__]);
-        $response=[
-            'data' => [],
-            'msg'=> '',
-            'statusCode'=> 200
-        ];
-        $data=$request->all();
-        // $data['website']= $request->header('website');
-        try{
-            $dbStatus=$this->userRepository->addPaymentDetails($data);
-            if($dbStatus['status']){
-                $response['statusCode']=200;
-                $response['msg']= $dbStatus['msg'];
-            }
-            else {
-                $response['statusCode']=404;
-                $response['msg']= $dbStatus['msg'];
-            }
-            $this->logMe(message:'end addPaymentDetails() Service',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
-            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
-        }catch(\Exception $e){
-            $this->logMe(message:'end addPaymentDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
-            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
-            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
-        }
-    }
-
-
 
 }

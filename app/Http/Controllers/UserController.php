@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\UserInterface;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use App\GlobalLogger;
 
 class UserController extends Controller
@@ -33,14 +32,6 @@ class UserController extends Controller
     public function updateDeliveryAddress(Request $request){
         $this->logMe(message:'updateDeliveryAddress()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->updateDeliveryAddress($request);
-    }
-    public function updatePaymentDetails(Request $request){
-        $this->logMe(message:'updatePaymentDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
-        return $this->userInterface->updatePaymentDetails($request);
-    }
-    public function addPaymentDetails(Request $request){
-        $this->logMe(message:'addPaymentDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
-        return $this->userInterface->addPaymentDetails($request);
     }
 
 }

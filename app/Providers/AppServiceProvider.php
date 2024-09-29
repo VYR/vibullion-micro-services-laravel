@@ -2,14 +2,12 @@
 
 namespace App\Providers;
 
-use App\Exceptions\GlobalExceptionHandler;
 use App\Interfaces\UserInterface;
+use App\ServiceInterfaces\PaymentInterface;
 use App\ServiceInterfaces\SingleContentInterface;
-use App\RepositoryInterfaces\SingleContentRepositoryInterface;
+use App\Services\PaymentService;
 use App\Services\SingleContentService;
-use App\Services\SingleContentRepositoryService;
 use App\Services\UserService;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(UserInterface::class, UserService::class);
         $this->app->singleton(SingleContentInterface::class, SingleContentService::class);
-        $this->app->singleton(SingleContentRepositoryInterface::class, SingleContentRepositoryService::class);
-        // $this->app->singleton(ExceptionHandler::class, GlobalExceptionHandler::class);
+        $this->app->singleton(PaymentInterface::class, PaymentService::class);
+
 
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SingleContentController;
 use Illuminate\Support\Facades\Route;
@@ -13,8 +14,14 @@ Route::group([], function () {
         Route::post('/get-aadhar-url', [UserController::class,'getAadharUrl']);
         Route::post('/update-bank-details', [UserController::class,'updateBankDetails']);
         Route::post('/update-delivery-address', [UserController::class,'updateDeliveryAddress']);
-        Route::post('/update-payment-details', [UserController::class,'updatePaymentDetails']);
-        Route::post('/add-payment-details', [UserController::class,'addPaymentDetails']);
+    });
+    /**Payment routes */
+    Route::group(['prefix' => 'payment'], function() {
+
+        Route::post('/update', [PaymentController::class,'updatePaymentDetails']);
+        Route::post('/add', [PaymentController::class,'addPaymentDetails']);
+        Route::post('/get-by-user', [PaymentController::class,'getPaymentsByUser']);
+        Route::post('/all-users', [PaymentController::class,'getAllPayments']);
 
     });
     /**Single Content routes */

@@ -1,11 +1,9 @@
 <?php
 
 namespace App\Repositories;
-use App\Exceptions\GlobalExceptionHandler;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use App\Models\Payment;
-use Illuminate\Support\Arr;
 use App\Exceptions\GlobalException;
 use App\GlobalLogger;
 
@@ -20,18 +18,7 @@ class UserRepository implements UserRepositoryInterface
     public function getEntireTableData($data=[]){
         return User::all();
     }
-    public function findById($id){
 
-    }
-    public function findByEmail($email){
-
-    }
-    public function findByUsername($username){
-
-    }
-    public function findByEmailAndPassword($email, $password){
-
-    }
     public function createUserByEmail(array $data){
 
     }
@@ -89,7 +76,7 @@ class UserRepository implements UserRepositoryInterface
                     ];
                 }
             }
-            $this->logMe(message:'end updateBankDetails() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+
         }catch(\Exception $e){
             $this->logMe(message:'end updateBankDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
@@ -135,7 +122,7 @@ class UserRepository implements UserRepositoryInterface
                     ];
                 }
             }
-            $this->logMe(message:'end updateDeliveryAddress() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+
         }catch(\Exception $e){
             $this->logMe(message:'end updateDeliveryAddress() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
@@ -184,7 +171,7 @@ class UserRepository implements UserRepositoryInterface
                     ];
                 }
             }
-            $this->logMe(message:'end updatePaymentDetails() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+
         }catch(\Exception $e){
             $this->logMe(message:'end updatePaymentDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
@@ -221,18 +208,18 @@ class UserRepository implements UserRepositoryInterface
                 $payment->payment_details=$data['payment_details'];
                 if ($payment->save()) {
                     return [
-                        'msg'=> " Payment Details Updated Successfully",
+                        'msg'=> " Payment Completed Successfully",
                         'status' => true
                     ];
                 }
                 else{
                     return [
-                        'msg'=> "Unable to Update Payment Details",
+                        'msg'=> "Unable to Complete Payment",
                         'status' => false
                     ];
                 }
             }
-            $this->logMe(message:'end addPaymentDetails() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+
         }catch(\Exception $e){
             $this->logMe(message:'end addPaymentDetails() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
