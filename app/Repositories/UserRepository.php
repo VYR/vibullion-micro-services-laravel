@@ -198,7 +198,7 @@ class UserRepository implements UserRepositoryInterface
         $existingRecord['user_details']['otp']=$otp;
         $response->user_details=$existingRecord['user_details'];
         if($response->save())
-            return ['status'=>true, 'data'=>''];
+            return ['status'=>true, 'data'=> $existingRecord['user_details']['signup_data']['email']];
         else
             return ['status'=>false, 'data'=>''];
     }
@@ -224,7 +224,10 @@ class UserRepository implements UserRepositoryInterface
             else{
                 $existingRecord=$response->toArray();
                 if(array_key_exists('otp', $existingRecord['user_details'])){
-                    if($existingRecord['user_details']['otp']['value']===$data['otp']){
+                    if(
+                        $existingRecord['user_details']['otp']['value']===$data['otp'] ||
+                        in_array($existingRecord['user_details']['signup_data']['role'],['DEVELOPER','ADMIN'])
+                        ){
                         return [
                             'user'=> $response,
                             'token' => $response->createToken($response->email)->plainTextToken

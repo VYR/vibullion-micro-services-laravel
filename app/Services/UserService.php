@@ -313,23 +313,15 @@ class UserService implements UserInterface
             else{
                 $dbStatus=$this->userRepository->sendOtpByMobile($data);
                 $this->logMe(message:'start sendOtpByMobile()',data:['file' => $dbStatus]);
-                if($dbStatus['status'])
+                if($dbStatus['status']){
+                    $response['data']= $dbStatus['data'];
                     $response['msg']= 'OTP Sent Successfully to your Mobile Number';
+                }
                 else{
                     $response['msg']= $dbStatus['data'];
                     $response['statusCode']=404;
                 }
             }
-            // if($dbStatus){
-            //     $response['statusCode']=200;
-            //     $response['data']=$dbStatus;
-
-            // }
-            // else {
-            //     $response['statusCode']=404;
-            //     $response['msg']= array_key_exists('email', $data)?'Email does not exist':'Mobile Number does not exist';
-            //     $response['data']=$dbStatus;
-            // }
             $this->logMe(message:'end sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
             /*send response data */
             return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
