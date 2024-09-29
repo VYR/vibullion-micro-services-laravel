@@ -35,8 +35,9 @@ return [
             'KUBERA_SCHEME' => 'kubera-scheme'
         ],
         'kubera-scheme' => [
-            'URL' => 'http://localhost:8001/api/',
-            'URL_PROD' => 'https://kuberascheme.com/back-end/public/api/',
+            'URL' => 'https://kuberascheme.com/micro-services/kubera/public/api/',
+            'URL_LOCAL' => 'http://localhost:8001/api/',
+            'URL_PROD' => 'https://kuberascheme.com/micro-services/kubera/public/api/',
             'SIGNUP' => 'user/signup'
         ],
         'SAVE_GOLD_SCHEME_URL' => 'http://localhost:8002/api/',

@@ -7,8 +7,8 @@ use App\Exceptions\GlobalExceptionHandler;
 use App\GlobalLogger;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use App\Mail\EmailTemplate;
+use Illuminate\Support\Facades\Mail as FacadesMail;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -144,6 +144,7 @@ class UserRepository implements UserRepositoryInterface
                 }
             }
         }catch(\Exception $e){
+            $this->logMe(message:'start updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
@@ -184,6 +185,7 @@ class UserRepository implements UserRepositoryInterface
             }
 
         }catch(\Exception $e){
+            $this->logMe(message:'start sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
 
@@ -192,13 +194,39 @@ class UserRepository implements UserRepositoryInterface
     // private function generateOtp(){
     //     $otp=
     // }
+    function sendEmail($data){
+        $this->logMe(message:'start sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=['status' => true,'message' => 'sendEmail Process started'];
+        $mailData = [
+            'salutation' => $data['salutation'],
+            'subject' =>  $data['subject'],
+            'body' => $data['body'],
+            'template' => $data['template']
+        ];
+        $to=$data['to'];
+        $resp=FacadesMail::to('yalamanda118@gmail.com')->send(new EmailTemplate($mailData));
+        $resp=FacadesMail::to($to)->send(new EmailTemplate($mailData));
 
+        $this->logMe(message:'end sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
+       // return $response;
+    }
     private function sendMobileOtp($existingRecord,$numOfTimes,$response){
-        $otp=['value'=>mt_rand(111111, 999999),'numOfTimes'=>$numOfTimes, 'date'=>time()];
+        $this->logMe(message:'start sendMobileOtp()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $otpNum=mt_rand(111111, 999999);
+        $otp=['value'=> $otpNum,'numOfTimes'=>$numOfTimes, 'date'=>time()];
         $existingRecord['user_details']['otp']=$otp;
         $response->user_details=$existingRecord['user_details'];
-        if($response->save())
+        if($response->save()){
+            $data=[
+                'salutation' => 'Dear '.$existingRecord['user_details']['signup_data']['name'],
+                'subject' => 'Login OTP - '.$otpNum,
+                'body' => 'Your OTP to login to Kubera Scheme is '.$otpNum,
+                'template' => 'forgotPassword',
+                'to' => $existingRecord['user_details']['signup_data']['email']
+            ];
+            $this->sendEmail($data);
             return ['status'=>true, 'data'=> $existingRecord['user_details']['signup_data']['email']];
+        }
         else
             return ['status'=>false, 'data'=>''];
     }

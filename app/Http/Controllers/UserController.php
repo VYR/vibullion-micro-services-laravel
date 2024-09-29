@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\GlobalLogger;
 use App\Interfaces\UserInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
 
 class UserController extends Controller
 {
