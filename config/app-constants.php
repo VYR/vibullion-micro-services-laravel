@@ -11,6 +11,13 @@ return [
         'DEBUG' => 'debug',
         'ERROR' => 'error',
     ],
+    'ROLES' => [
+        'DEVELOPER',
+        'ADMIN',
+        'EMPLOYEE',
+        'DELIVERY_PARTNER',
+        'SCHEME_MEMBER'
+    ],
     'BASIC'=> [
         $common['SUCCESS'] => $common['SUCCESS'],
         $common['FAILED'] => $common['FAILED'],
@@ -35,7 +42,7 @@ return [
             'KUBERA_SCHEME' => 'kubera-scheme'
         ],
         'kubera-scheme' => [
-            'URL' => 'http://localhost:8001/api/',
+            'URL' => 'https://kuberascheme.com/micro-services/kubera/public/api/',
             'URL_LOCAL' => 'http://localhost:8001/api/',
             'URL_PROD' => 'https://kuberascheme.com/micro-services/kubera/public/api/',
             'SIGNUP' => 'user/signup'

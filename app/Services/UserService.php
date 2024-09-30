@@ -156,16 +156,21 @@ class UserService implements UserInterface
             'data' => [],
             'statusCode'=> 200
         ];
-        // try{
-            $response['data']=$this->userRepository->getEntireTableData($request->all());
+        $data=$request->all();
+        if($request->hasHeader('website'))
+        $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->getEntireTableData($data);
+            $response['data']=['content' => $dbStatus,'totalRecords' => count($dbStatus)];
             $response['msg']=config('app-constants.RESPONSE.MSG.GET_DATA_SUCCESSFUL');
-        // }catch(\Exception $e){
-        //     return new GlobalExceptionHandler(data:$data);
-        // }
-        $this->logMe(message:'end getEntireTableData()',data:['file' => __FILE__, 'line' => __LINE__]);
-
-        /*send response data */
-        return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+            $this->logMe(message:'end getEntireTableData()',data:['file' => __FILE__, 'line' => __LINE__]);
+            /*send response data */
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }
+        catch(\Exception $e){
+            $this->logMe(message:'end getEntireTableData() at Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(data:$response, errMsg: $e->getMessage());
+        }
     }
 
     public function handleMicroServices(Request $request){

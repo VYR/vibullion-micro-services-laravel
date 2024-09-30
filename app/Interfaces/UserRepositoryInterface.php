@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface UserRepositoryInterface
 {
-    public function getEntireTableData();
+    public function getEntireTableData($data);
     public function findById($id);
     public function findByEmail($email);
     public function findByUsername($username);

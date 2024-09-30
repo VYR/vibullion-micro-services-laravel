@@ -19,7 +19,17 @@ class UserRepository implements UserRepositoryInterface
     }
 
     public function getEntireTableData($data=[]){
-        return User::all();
+        $conditions=[];
+        if(array_key_exists('website', $data)){
+            array_push($conditions,["user_details->signup_data->website",'=', $data['website']]);
+        }
+        if(array_key_exists('role', $data)){
+            array_push($conditions,["user_details->signup_data->role",'=', strtoupper($data['role'])]);
+        }
+        if(count($conditions)>0)
+            return User::where($conditions)->orderByDesc('created_at')->get();
+        else
+            return User::orderByDesc('created_at')->get();
     }
     public function findById($id){
 
