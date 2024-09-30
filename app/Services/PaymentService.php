@@ -114,6 +114,7 @@ class PaymentService implements PaymentInterface
             'statusCode'=> 200
         ];
         $data=$request->all();
+        $data['website']= $request->header('website');
         try{
             $response['statusCode']=200;
             $response['msg']= 'Payment Details received successfully';
