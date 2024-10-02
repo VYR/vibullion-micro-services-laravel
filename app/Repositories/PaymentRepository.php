@@ -6,6 +6,8 @@ use App\Models\Payment;
 use App\Exceptions\GlobalException;
 use App\GlobalLogger;
 use App\RepositoryInterfaces\PaymentRepositoryInterface;
+use App\Mail\EmailTemplate;
+use Illuminate\Support\Facades\Mail as FacadesMail;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
@@ -92,6 +94,15 @@ class PaymentRepository implements PaymentRepositoryInterface
                 $payment->userId=$data['userId'];
                 $payment->payment_details=$data['payment_details'];
                 if ($payment->save()) {
+                    $data=[
+                        'salutation' => 'Dear '.$data['payment_details']['name'],
+                        'subject' => $data['payment_details']['paymentForLabel'].' Payment - Rs.'.$data['payment_details']['amount_paid'],
+                        'body' => '',
+                        'details' => $data['payment_details'],
+                        'template' => 'payment',
+                        'to' => $data['payment_details']['email']
+                    ];
+                    $this->sendPaymentEmail($data);
                     return [
                         'msg'=> " Payment Completed Successfully",
                         'status' => true
@@ -143,7 +154,26 @@ class PaymentRepository implements PaymentRepositoryInterface
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
+    function sendPaymentEmail($data){
+        $this->logMe(message:'start sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=['status' => true,'message' => 'sendEmail Process started'];
+        $mailData = [
+            'logo' => config('app-constants.IMAGES.LOGO'),
+            'website' => config('app-constants.EMAILS.SITE_URL'),
+            'team' => config('app-constants.EMAILS.TEAM'),
+            'salutation' => $data['salutation'],
+            'subject' =>  $data['subject'],
+            'body' => $data['body'],
+            'details' => $data['details'],
+            'template' => $data['template']
+        ];
+        $to=$data['to'];
+        $resp=FacadesMail::to(config('app-constants.EMAILS.RAO'))->send(new EmailTemplate($mailData));
+        $resp=FacadesMail::to($to)->send(new EmailTemplate($mailData));
 
+        $this->logMe(message:'end sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
+       // return $response;
+    }
 
 
 }
