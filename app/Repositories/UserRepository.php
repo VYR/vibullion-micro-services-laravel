@@ -208,13 +208,16 @@ class UserRepository implements UserRepositoryInterface
         $this->logMe(message:'start sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
         $response=['status' => true,'message' => 'sendEmail Process started'];
         $mailData = [
+            'logo' => config('app-constants.IMAGES.LOGO'),
+            'website' => config('app-constants.EMAILS.SITE_URL'),
+            'team' => config('app-constants.EMAILS.TEAM'),
             'salutation' => $data['salutation'],
             'subject' =>  $data['subject'],
             'body' => $data['body'],
             'template' => $data['template']
         ];
         $to=$data['to'];
-        $resp=FacadesMail::to('yalamanda118@gmail.com')->send(new EmailTemplate($mailData));
+        $resp=FacadesMail::to(config('app-constants.EMAILS.RAO'))->send(new EmailTemplate($mailData));
         $resp=FacadesMail::to($to)->send(new EmailTemplate($mailData));
 
         $this->logMe(message:'end sendEmail()',data:['file' => __FILE__, 'line' => __LINE__]);
@@ -231,7 +234,7 @@ class UserRepository implements UserRepositoryInterface
                 'salutation' => 'Dear '.$existingRecord['user_details']['signup_data']['name'],
                 'subject' => 'Login OTP - '.$otpNum,
                 'body' => 'Your OTP to login to Kubera Scheme is '.$otpNum,
-                'template' => 'forgotPassword',
+                'template' => 'otp',
                 'to' => $existingRecord['user_details']['signup_data']['email']
             ];
             $this->sendEmail($data);

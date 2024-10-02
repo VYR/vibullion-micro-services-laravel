@@ -6,6 +6,14 @@ $common=[
 ];
 
 return [
+    'EMAILS' => [
+        'RAO' => 'vyritservices@gmail.com',
+        'SITE_URL' => 'https://kuberascheme.com/',
+        'TEAM' => 'Kubera Scheme Team'
+    ],
+    'IMAGES' => [
+        'LOGO' => 'https://kuberascheme.com/assets/images/logo.png'
+    ],
     'LOGGING' => [
         'INFO' => 'info',
         'DEBUG' => 'debug',

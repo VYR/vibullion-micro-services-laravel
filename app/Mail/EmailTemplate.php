@@ -1,20 +1,20 @@
 <?php
-  
+
 namespace App\Mail;
-  
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-  
+
 class EmailTemplate extends Mailable
 {
     use Queueable, SerializesModels;
-  
+
     public $mailData;
-  
+
     /**
      * Create a new message instance.
      */
@@ -22,7 +22,7 @@ class EmailTemplate extends Mailable
     {
         $this->mailData = $mailData;
     }
-  
+
     /**
      * Get the message envelope.
      */
@@ -32,17 +32,18 @@ class EmailTemplate extends Mailable
             subject:  $this->mailData['subject'],
         );
     }
-  
+
     /**
      * Get the message content definition.
      */
     public function content(): Content
     {
+        $template='emails.'.$this->mailData['template'];
         return new Content(
-            view: 'emails.demoMail',
+            view: $template,
         );
     }
-  
+
     /**
      * Get the attachments for the message.
      *
