@@ -237,8 +237,8 @@ class UserRepository implements UserRepositoryInterface
                 'template' => 'otp',
                 'to' => $existingRecord['user_details']['signup_data']['email']
             ];
-            // $otpURL='https://360marketingservice.com/api/v2/SendSMS?SenderId=VIAUBU&Is_Unicode=false&Is_Flash=false&Message='.$otpNum.'%20is%20your%20one-time%20password%20for%20your%20Kubera%20Account%20powered%20by%20%22VIINDHYA%20AU%20BULLION%20LLP%22.This%20OTP%20is%20valid%20only%20for%205%20minutes.&MobileNumbers='.$existingRecord['user_details']['signup_data']['phoneNumber'].'&ApiKey=bdWWoqrc54f1Q5mvoD21eogUirIZHU%2Bl%2BzoPL2NVEd8%3D&ClientId=304b754c-ca9b-4028-b59f-1d8a08bffb4f';
-            // $this->sendSMS($otpURL) ;
+            $otpURL='https://360marketingservice.com/api/v2/SendSMS?SenderId=VIAUBU&Is_Unicode=false&Is_Flash=false&Message='.$otpNum.'%20is%20your%20one-time%20password%20for%20your%20Kubera%20Account%20powered%20by%20%22VIINDHYA%20AU%20BULLION%20LLP%22.This%20OTP%20is%20valid%20only%20for%205%20minutes.&MobileNumbers='.$existingRecord['user_details']['signup_data']['phoneNumber'].'&ApiKey=bdWWoqrc54f1Q5mvoD21eogUirIZHU%2Bl%2BzoPL2NVEd8%3D&ClientId=304b754c-ca9b-4028-b59f-1d8a08bffb4f';
+            $this->sendSMS($otpURL) ;
             $this->sendEmail($data);
             return ['status'=>true, 'data'=> $existingRecord['user_details']['signup_data']['email']];
         }
@@ -287,29 +287,29 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    // private function sendSMS( $url){
-    //     $this->logMe(message:'start sendSMS()',data:['file' => __FILE__, 'line' => __LINE__]);
-    //     $curl = curl_init();
+    private function sendSMS( $url){
+        $this->logMe(message:'start sendSMS()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $curl = curl_init();
 
-    //     curl_setopt_array($curl, array(
-    //     CURLOPT_URL => $url,
-    //     CURLOPT_RETURNTRANSFER => true,
-    //     CURLOPT_ENCODING => '',
-    //     CURLOPT_MAXREDIRS => 10,
-    //     CURLOPT_TIMEOUT => 0,
-    //     CURLOPT_FOLLOWLOCATION => true,
-    //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    //     CURLOPT_CUSTOMREQUEST => 'GET',
-    //     ));
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
 
-    //     $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-    //     curl_close($curl);
-    //     $this->logMe(message:'serviceOutput sendSMS()',data:['url' => $url]);
-    //     $this->logMe(message:'serviceOutput sendSMS()',data:['response' => $response]);
-    //     $this->logMe(message:'end sendSMS()',data:['file' => __FILE__, 'line' => __LINE__]);
-    //     // return json_decode($response);
+        curl_close($curl);
+        $this->logMe(message:'serviceOutput sendSMS()',data:['url' => $url]);
+        $this->logMe(message:'serviceOutput sendSMS()',data:['response' => $response]);
+        $this->logMe(message:'end sendSMS()',data:['file' => __FILE__, 'line' => __LINE__]);
+        // return json_decode($response);
 
-    // }
+    }
 
 }
