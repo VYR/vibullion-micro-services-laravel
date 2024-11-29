@@ -159,6 +159,50 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
+    public function completeKyc(array $data){
+        $this->logMe(message:'start completeKyc()',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            if(!array_key_exists('userId', $data)){
+                return [
+                    'msg'=> " User Id key is mandatory",
+                    'status' => false
+                ];
+            }
+            $conditions=[
+                ["email",'=', $data['userId']]
+            ];
+            $response=User::where($conditions)->first();
+            if(is_null($response)){
+                return [
+                    'msg'=> "Invalid User",
+                    'status' => false
+                ];
+            }
+            else{
+                $existingRecord=$response->toArray();
+                foreach ($data as $key => $value ) {
+                    $existingRecord['user_details']['signup_data'][$key]=$value;
+                }
+                $response->user_details=$existingRecord['user_details'];
+                if ($response->save()) {
+                    return [
+                        'msg'=> " KYC Details Saved Successfully",
+                        'status' => true
+                    ];
+                }
+                else{
+                    return [
+                        'msg'=> "Unable to Save KYC Details ",
+                        'status' => false
+                    ];
+                }
+            }
+        }catch(\Exception $e){
+            $this->logMe(message:'start completeKyc()',data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
     public function sendOtpByMobile(array $data){
         $this->logMe(message:'start sendOtpByMobile()',data:['file' => __FILE__, 'line' => __LINE__]);
         try{
@@ -237,8 +281,8 @@ class UserRepository implements UserRepositoryInterface
                 'template' => 'otp',
                 'to' => $existingRecord['user_details']['signup_data']['email']
             ];
-            $otpURL='https://360marketingservice.com/api/v2/SendSMS?SenderId=VIAUBU&Is_Unicode=false&Is_Flash=false&Message='.$otpNum.'%20is%20your%20one-time%20password%20for%20your%20Kubera%20Account%20powered%20by%20%22VIINDHYA%20AU%20BULLION%20LLP%22.This%20OTP%20is%20valid%20only%20for%205%20minutes.&MobileNumbers='.$existingRecord['user_details']['signup_data']['phoneNumber'].'&ApiKey=bdWWoqrc54f1Q5mvoD21eogUirIZHU%2Bl%2BzoPL2NVEd8%3D&ClientId=304b754c-ca9b-4028-b59f-1d8a08bffb4f';
-            $this->sendSMS($otpURL) ;
+            // $otpURL='https://360marketingservice.com/api/v2/SendSMS?SenderId=VIAUBU&Is_Unicode=false&Is_Flash=false&Message='.$otpNum.'%20is%20your%20one-time%20password%20for%20your%20Kubera%20Account%20powered%20by%20%22VIINDHYA%20AU%20BULLION%20LLP%22.This%20OTP%20is%20valid%20only%20for%205%20minutes.&MobileNumbers='.$existingRecord['user_details']['signup_data']['phoneNumber'].'&ApiKey=bdWWoqrc54f1Q5mvoD21eogUirIZHU%2Bl%2BzoPL2NVEd8%3D&ClientId=304b754c-ca9b-4028-b59f-1d8a08bffb4f';
+            // $this->sendSMS($otpURL) ;
             $this->sendEmail($data);
             return ['status'=>true, 'data'=> $existingRecord['user_details']['signup_data']['email']];
         }

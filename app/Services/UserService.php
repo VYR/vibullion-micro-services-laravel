@@ -148,6 +148,36 @@ class UserService implements UserInterface
         }
     }
 
+    public function completeKyc(Request $request)
+    {
+        $this->logMe(message:'start completeKyc()',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        $data=$request->all();
+        // $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->completeKyc($data);
+            if($dbStatus['status']){
+                $response['statusCode']=200;
+                $response['msg']= $dbStatus['msg'];
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= $dbStatus['msg'];
+            }
+            $this->logMe(message:'end completeKyc()',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            $this->logMe(message:'end completeKyc() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+
     public function getEntireTableData(Request $request)
     {
         $this->logMe(message:'start getEntireTableData()',data:['file' => __FILE__, 'line' => __LINE__]);

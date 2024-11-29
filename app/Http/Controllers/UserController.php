@@ -26,6 +26,11 @@ class UserController extends Controller
         $this->logMe(message:'updateUserDetails()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->updateUserDetails($request);
     }
+    public function completeKyc(Request $request){
+        $this->logMe(message:'completeKyc()',data:['file' => __FILE__, 'line' => __LINE__]);
+        return $this->userInterface->completeKyc($request);
+    }
+
     public function totalUsers(Request $request){
         $this->logMe(message:'totalUsers()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->getEntireTableData($request);
