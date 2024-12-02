@@ -78,12 +78,28 @@ class UserRepository implements UserRepositoryInterface
             $user->fill($data);
             $user->user_details=$data['user_details'];
             $resp['status']=$user->save();
+            $this->sendSignupMessage($data);
             return $resp;
 
         }
         catch(\Exception $e){
+            $this->logMe(message:'catch signup()',data:['file' => __FILE__, 'line' => __LINE__]);
             throw new GlobalException(errCode:404,data:[], errMsg: $e->getMessage());
         }
+    }
+
+    private function sendSignupMessage($existingRecord){
+        $this->logMe(message:'start sendSignupMessage()',data:['file' => __FILE__, 'line' => __LINE__]);
+            $data=[
+                'salutation' => 'Dear '.$existingRecord['user_details']['signup_data']['name'],
+                'subject' => 'Signup - '.$existingRecord['user_details']['signup_data']['name'],
+                'body' => 'Thank you for signing up with VIINDHYA AU BULLION LLP! Get exclusive offers and updates on our premium gold and silver products.',
+                'template' => 'otp',
+                'to' => $existingRecord['user_details']['signup_data']['email']
+            ];
+            $otpURL='https://360marketingservice.com/api/v2/SendSMS?SenderId=VIAUBU&Is_Unicode=false&Is_Flash=false&Message=Thank%20you%20for%20signing%20up%20with%20VIINDHYA%20AU%20BULLION%20LLP%21%20Get%20exclusive%20offers%20and%20updates%20on%20our%20premium%20gold%20and%20silver%20products.&MobileNumbers='.$existingRecord['user_details']['signup_data']['phoneNumber'].'&ApiKey=bdWWoqrc54f1Q5mvoD21eogUirIZHU%2Bl%2BzoPL2NVEd8%3D&ClientId=304b754c-ca9b-4028-b59f-1d8a08bffb4f';
+            $this->sendSMS($otpURL) ;
+            $this->sendEmail($data);
     }
     public function login(array $data){
         $this->logMe(message:'start login()',data:['file' => __FILE__, 'line' => __LINE__]);
