@@ -14,6 +14,7 @@ Route::group([], function () {
         Route::post('/get-aadhar-url', [UserController::class,'getAadharUrl']);
         Route::post('/update-bank-details', [UserController::class,'updateBankDetails']);
         Route::post('/update-delivery-address', [UserController::class,'updateDeliveryAddress']);
+        Route::post('/add-contact-messages', [UserController::class,'addContactMessages']);
     });
     /**Payment routes */
     Route::group(['prefix' => 'payment'], function() {
@@ -35,6 +36,8 @@ Route::group([], function () {
     Route::group(['prefix' => 'admin'], function() {
 
         Route::get('/total-users', [UserController::class,'totalUsers']);
+        Route::get('/get-contact-messages', [UserController::class,'totalUsers']);
+        Route::get('/update-contact-messages', [UserController::class,'updateContactMessages']);
 
     });
 

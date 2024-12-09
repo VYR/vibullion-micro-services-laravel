@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Payment;
 use App\Exceptions\GlobalException;
 use App\GlobalLogger;
+use App\Models\ContactMessage;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -225,7 +226,67 @@ class UserRepository implements UserRepositoryInterface
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
+    public function addContactMessages(array $data){
+        $this->logMe(message:'start addContactMessages() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            $obj=new ContactMessage();
+            $obj->fill($data);
+            $obj->employee_reply='Just received message';
+            $obj->status='SUBMITTED';
+            $this->logMe(message:'end addContactMessages() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+            return $obj->save();
+        }
+        catch(\Exception $e){
+            $this->logMe(message:'end addContactMessages() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
+    public function updateContactMessages(array $data){
+        $this->logMe(message:'start updateDeliveryAddress() Repository',data:['file' => __FILE__, 'line' => __LINE__]);
+        try{
+            if(!array_key_exists('userId', $data)){
+                return [
+                    'msg'=> " User Id key is mandatory",
+                    'status' => false
+                ];
+            }
+            if(!array_key_exists('delivery_address', $data)){
+                return [
+                    'msg'=> " Delivery Address key is mandatory",
+                    'status' => false
+                ];
+            }
+            $conditions=[
+                ["id",'=', $data['userId']]
+            ];
+            $response=User::where($conditions)->first();
+            if(is_null($response)){
+                return [
+                    'msg'=> "Invalid User",
+                    'status' => false
+                ];
+            }
+            else{
+                $response->delivery_address=$data['delivery_address'];
+                if ($response->save()) {
+                    return [
+                        'msg'=> " Delivery Address Updated Successfully",
+                        'status' => true
+                    ];
+                }
+                else{
+                    return [
+                        'msg'=> "Unable to Update Delivery Address",
+                        'status' => false
+                    ];
+                }
+            }
 
+        }catch(\Exception $e){
+            $this->logMe(message:'end updateDeliveryAddress() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
 
+        }
+    }
 
 }

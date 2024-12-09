@@ -167,5 +167,62 @@ class UserService implements UserInterface
             throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
         }
     }
-
+    public function addContactMessages(Request $request)
+    {
+         /* Create response data */
+         $this->logMe(message:'start addContactMessages() Service',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => '',
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        try{
+            $response['data']=$request->all();
+            /** Call DB operations */
+            if($this->userRepository->addContactMessages($request->all())){
+                $response['statusCode']=200;
+                $response['msg']= 'Your details received successfully. Our team will contact you soon';
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= 'Something went wrong please try again';
+            }
+            /*send response data */
+            $this->logMe(message:'end addContactMessages() Service',data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }
+        catch(\Exception $e){
+            $this->logMe(message:'end addContactMessages() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:'', errMsg: $e->getMessage());
+        }
+    }
+    public function updateContactMessages(Request $request)
+    {
+        $this->logMe(message:'start updateContactMessages() Service',data:['file' => __FILE__, 'line' => __LINE__]);
+        $response=[
+            'data' => [],
+            'msg'=> '',
+            'statusCode'=> 200
+        ];
+        $data=$request->all();
+        // $data['website']= $request->header('website');
+        try{
+            $dbStatus=$this->userRepository->updateContactMessages($data);
+            if($dbStatus['status']){
+                $response['statusCode']=200;
+                $response['msg']= $dbStatus['msg'];
+            }
+            else {
+                $response['statusCode']=404;
+                $response['msg']= $dbStatus['msg'];
+            }
+            $this->logMe(message:'end updateContactMessages() Service',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message:json_encode($dbStatus),data:['file' => __FILE__, 'line' => __LINE__]);
+            return $this->sendResponse($response['statusCode'],$response['msg'],$response['data'],'');
+        }catch(\Exception $e){
+            $this->logMe(message:'end updateContactMessages() Exception',data:['file' => __FILE__, 'line' => __LINE__]);
+            $this->logMe(message: $e->getMessage(),data:['file' => __FILE__, 'line' => __LINE__]);
+            throw new GlobalException(errCode:404,data:$data, errMsg: $e->getMessage());
+        }
+    }
 }

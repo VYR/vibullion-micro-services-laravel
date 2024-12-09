@@ -33,5 +33,12 @@ class UserController extends Controller
         $this->logMe(message:'updateDeliveryAddress()',data:['file' => __FILE__, 'line' => __LINE__]);
         return $this->userInterface->updateDeliveryAddress($request);
     }
-
+    public function addContactMessages(Request $request){
+        $this->logMe(message:'start addContactMessages()',data:['file' => __FILE__, 'line' => __LINE__]);
+        return $this->userInterface->addContactMessages($request);
+    }
+    public function updateContactMessages(Request $request){
+        $this->logMe(message:'updateContactMessages()',data:['file' => __FILE__, 'line' => __LINE__]);
+        return $this->userInterface->updateContactMessages($request);
+    }
 }

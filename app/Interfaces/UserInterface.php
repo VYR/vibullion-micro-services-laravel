@@ -11,6 +11,10 @@ interface UserInterface
     public function getAadharUrl(Request $request);
     public function updateBankDetails(Request $request);
     public function updateDeliveryAddress(Request $request);
+    public function addContactMessages(Request $request);
+    public function updateContactMessages(Request $request);
+
+
 
 
 

@@ -9,5 +9,8 @@ interface UserRepositoryInterface
     public function signup(array $data);
     public function updateBankDetails(array $data);
     public function updateDeliveryAddress(array $data);
+    public function addContactMessages(array $data);
+    public function updateContactMessages(array $data);
+
 
 }
